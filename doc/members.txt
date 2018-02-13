@@ -1,0 +1,17 @@
+Name: <Luka Dragicevic>
+Account: <wyksone>
+Have you been on co-op? <yes>
+List 1 to 3 programming languages you know: <Java> <C#> <SQL>
+List 1 to 3 hobbies or interests: <Films> <Cooking> <Cleaning>
+
+Name: <Desa Brnada>
+Account: <desa56>
+Have you been on co-op? <yes>
+List 1 to 3 programming languages you know: <Java> <JS> <SQL>
+List 1 to 3 hobbies or interests: <Photography> <Fitness> <Coffee>
+
+Name: <Niko Madesko>
+Account: <NikoMadesko>
+Have you been on co-op? <yes>
+List 1 to 3 programming languages you know: <Java> <C#> <SQL>
+List 1 to 3 hobbies or interests: <Gym> <Netflix> <Chill>
