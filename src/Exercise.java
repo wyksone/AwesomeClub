@@ -36,7 +36,6 @@ public class Exercise {
     }
     //endregion
 
-
     @Override
     public String toString() {
         return "Exercise{" +

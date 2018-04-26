@@ -1,8 +1,9 @@
 public class Test {
     public static void main(String[] args) {
+        /*
         ObjectGetter og = new ObjectGetter();
         CsvWriter csvWriter = new CsvWriter();
-        /*
+
         for (BasicFood food: og.getFoods()){
             System.out.println(food.toString());
         }
@@ -16,10 +17,13 @@ public class Test {
         }
 
         csvWriter.saveFoods(og.getFoods(), og.getRecipes());
-        csvWriter.saveExercises(og.getExercises());*/
+        csvWriter.saveExercises(og.getExercises());
 
         for (Food food: og.getAllFoods()){
             System.out.println(food.toString());
-        }
+        }*/
+
+        MainView view = new MainView();
+        view.setVisible(true);
     }
 }

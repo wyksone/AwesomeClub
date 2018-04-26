@@ -1,0 +1,13 @@
+b,Kurac,147.0,13.6,13.6,1.1,5.1
+b,Hot Dog Bun,25.0,13.6,13.6,1.1,5.1
+b,Mustard,35.0,13.6,13.6,1.1,5.1
+b,Ketchup,45.0,13.6,13.6,1.1,5.1
+b,Ajvar,50.0,13.6,13.6,1.1,5.1
+b,Onion,15.0,13.6,13.6,1.1,5.1
+r,Hot Dog-Bun-Mustard,224.5,47.6,47.6,3.9,17.8
+r,Hot Dog-Bun-Ketchup,239.5,47.6,47.6,3.9,17.8
+r,Hot Dog-Bun-Onion,194.5,47.6,47.6,3.9,17.8
+r,Hot Dog-Bun-Ajvar,247.0,47.6,47.6,3.9,17.8
+r,Hot Dog-Bun-Mustard-Ketchup,269.5,61.2,61.2,5.0,22.9
+r,Recipe in Recipe,324.5,74.8,74.8,6.1,28.1
+r,Recipe in Recipe2,424.5,102.0,102.0,8.3,38.3

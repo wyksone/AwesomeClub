@@ -4,31 +4,34 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 public class ObjectGetter {
 
-    String csvFoods = "data/foods.csv";
-    String csvExercise = "data/exercise.csv";
+    String csvFoodsFilename = "data/foods.csv";
+    String csvExerciseFilename = "data/exercise.csv";
     String csvLog = "data/log.csv";
     BufferedReader br1 = null;
     BufferedReader br2 = null;
     String line = "";
-    String cvsSplitBy = ",";
+    static String SPLIT_CHARACTER = ",";
 
     public ObjectGetter() {
     }
 
-    /*public ArrayList<BasicFood> getFoods () {
+    public ArrayList<BasicFood> getFoods () {
         ArrayList<BasicFood> basicFoods = new ArrayList<>();
 
         try {
 
-            br1 = new BufferedReader(new FileReader(csvFoods));
+            br1 = new BufferedReader(new FileReader(csvFoodsFilename));
             while ((line = br1.readLine()) != null) {
 
-                String[] splits = line.split(cvsSplitBy);
+                String[] splits = line.split(SPLIT_CHARACTER);
                 char type = splits[0].charAt(0);
 
                 if (type == 'b') {
@@ -61,156 +64,173 @@ public class ObjectGetter {
             }
         }
         return basicFoods;
-    }*/
+    }
+
+    public ArrayList<String> readFile(String filename) {
+        try {
+            FileReader fr = new FileReader(filename);
+            BufferedReader br1 = new BufferedReader(fr);
+
+            ArrayList<String> array = new ArrayList<>();
+            while ((line = br1.readLine()) != null) {
+                array.add(line);
+            }
+            return array;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public HashMap<String, String> toHashMap(ArrayList<String> array) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        array.forEach(str -> {
+            String[] splits = str.split(SPLIT_CHARACTER);
+            hashMap.put(splits[1], str);
+        });
+        return hashMap;
+    }
+
+    public BasicFood csvStringToFood(String str){
+        String[] splits =str.split(SPLIT_CHARACTER);
+        char type = splits[0].charAt(0);
+        String name = splits[1];
+        double calorie = Double.parseDouble(splits[2]);
+        double fat = Double.parseDouble(splits[3]);
+        double carb = Double.parseDouble(splits[4]);
+        double protein = Double.parseDouble(splits[5]);
+
+       return new BasicFood(type, name, calorie, fat, carb, protein);
+    }
+
+    public boolean isBasicFood(String str){
+        return str.split(SPLIT_CHARACTER)[0].equals("b");
+    }
+
+    public boolean isRecipe(String str){
+        return str.split(SPLIT_CHARACTER)[0].equals("r");
+    }
+
+    public Recipe csvStringToRecipe(String str, HashMap<String, String> allFood){
+        String[] splits =str.split(SPLIT_CHARACTER);
+        char recipeType = splits[0].charAt(0);
+        String recipeName = splits[1];
+
+        ArrayList<FoodCount> foods = new ArrayList<>();
+        for (int i = 2; i < splits.length; i+=2) {
+
+            String name = splits[i];
+            String recipeCsv = allFood.get(name);
+
+            if(this.isRecipe(recipeCsv)) {
+                Recipe recipe = csvStringToRecipe(recipeCsv, allFood);
+                foods.addAll(recipe.getFoods());
+            }
+            else{
+                double count = Double.parseDouble(splits[i+1]);
+                BasicFood food = csvStringToFood(allFood.get(name));
+                FoodCount foodCount = new FoodCount(food, count);
+                foods.add(foodCount);
+            }
+        }
+        return new Recipe(recipeType, recipeName, foods);
+    }
+
+
 
     public ArrayList<Food> getAllFoods() {
+       ArrayList<String> foodsCsv = this.readFile(this.csvFoodsFilename);
+       HashMap<String, String> foodsMap = this.toHashMap(foodsCsv);
+       ArrayList<Food> foods = new ArrayList<>();
 
-        ArrayList<Food> foods = new ArrayList<>();
-        ArrayList<Food> tempFoods = new ArrayList<>();
-
-        try {
-            FileReader fr = new FileReader(csvFoods);
-            br1 = new BufferedReader(fr);
-
-            while ((line = br1.readLine()) != null) {
-
-                String[] splits = line.split(cvsSplitBy);
-                char type = splits[0].charAt(0);
-                String name = splits[1];
-
-                if (type == 'b') {
-                    tempFoods.add(new BasicFood(type, name));
-                } else if (type == 'r') {
-                    tempFoods.add(new Recipe(type, name));
-                }
+        for (String str:foodsCsv) {
+            if(this.isBasicFood(str)) {
+                foods.add(this.csvStringToFood(str));
             }
 
-            FileReader fr2 = new FileReader(csvFoods);
-            BufferedReader br2 = new BufferedReader(fr2);
+            if(this.isRecipe(str)){
+                foods.add(this.csvStringToRecipe(str, foodsMap));
+            }
+        }
 
-            while ((line = br2.readLine()) != null) {
+       return  foods;
+    }
 
-                String[] splits = line.split(cvsSplitBy);
-                char type = splits[0].charAt(0);
+    /*
+        public ArrayList<Recipe> getRecipes() {
 
-                if (type == 'b') {
+            ArrayList<Recipe> recipes = new ArrayList<>();
 
-                    String name = splits[1];
-                    double calorie = Double.parseDouble(splits[2]);
-                    double fat = Double.parseDouble(splits[3]);
-                    double carb = Double.parseDouble(splits[4]);
-                    double protein = Double.parseDouble(splits[5]);
+            try {
 
-                    BasicFood food1 = new BasicFood(type, name, calorie, fat, carb, protein);
-                    foods.add(food1);
-
-                } else if (type == 'r') {
-
-                    //r,Hot Dog-Bun-Mustard-Ketchup,Hot Dog,1.0,Hot Dog Bun,1.0,Mustard,1.5,Ketchup,1.0
+                br2 = new BufferedReader(new FileReader(csvFoodsFilename));
+                while ((line = br2.readLine()) != null) {
 
                     ArrayList<Pair> pairs = new ArrayList<>();
                     pairs.clear();
+                    String[] splits = line.split(SPLIT_CHARACTER);
                     int ingNum = splits.length;
+                    char type = splits[0].charAt(0);
 
-                    String name = splits[1];
+                    if (type == 'r') {
+                        String name = splits[1];
 
-                    ArrayList<FoodCount> foodCounts = new ArrayList<>();
+                        for (int i = 2; i < ingNum; i++) {
+                            String foodName = splits[i];
+                            i++;
+                            double amount = Double.parseDouble(splits[i]);
 
-                    for (int i = 2; i < ingNum; i++) {
-
-                        for (Food food: tempFoods) {
-                            if (food.getName().equals(splits[i])) {
-                                foodCounts.add(new FoodCount(food, Double.parseDouble(splits[i+1])));
-                            }
-                        }
-                    }
-                    foods.add(new Recipe(type, name, foodCounts));
-                }
-            }
-
-            ArrayList<Food> tempFoods2 = (ArrayList<Food>) foods.clone();
-
-
-            FileReader fr3 = new FileReader(csvFoods);
-            BufferedReader br3 = new BufferedReader(fr3);
-
-            while ((line = br3.readLine()) != null) {
-            for (Food food: foods) {
-                String[] splits = line.split(cvsSplitBy);
-                char type = splits[0].charAt(0);
-
-                if (food.getType() == 'r') {
-                    String name = splits[1];
-                    Recipe recipe = (Recipe)food;
-                    for (FoodCount tempFood: recipe.getFoods()){
-                        if (name.equals(tempFood.getFood().getName())) {
-                            for (Food tempFood2: tempFoods2) {
-                                if (tempFood2.getName().equals(tempFood.getFood().getName())) {
-                                    tempFood.getFood().setCalorie(tempFood2.getCalorie());
-                                    tempFood.getFood().setCarb(tempFood2.getCarb());
-                                    tempFood.getFood().setFat(tempFood2.getFat());
-                                    tempFood.getFood().setProtein(tempFood2.getProtein());
-                                    recipe.recalculateNutrients();
+                            for (BasicFood basicFood : getFoods()) {
+                                if (foodName.equals(basicFood.getName())) {
+                                    Pair<BasicFood, Double> pair = new Pair<>(basicFood, amount);
+                                    pairs.add(pair);
                                 }
                             }
+
                         }
+
+                        recipes.add(new Recipe(type, name, pairs));
+                    }
+
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                if (br2 != null) {
+                    try {
+                        br2.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
                     }
                 }
-            }}
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (br1 != null) {
-                try {
-                    br1.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
             }
+            return recipes;
         }
-        return foods;
+    */
+    public ArrayList<Exercise> getExercises() {
 
-    }
-/*
-    public ArrayList<Recipe> getRecipes() {
-
-        ArrayList<Recipe> recipes = new ArrayList<>();
+        ArrayList<Exercise> exercises = new ArrayList<>();
 
         try {
 
-            br2 = new BufferedReader(new FileReader(csvFoods));
+            br2 = new BufferedReader(new FileReader(csvExerciseFilename));
             while ((line = br2.readLine()) != null) {
 
-                ArrayList<Pair> pairs = new ArrayList<>();
-                pairs.clear();
-                String[] splits = line.split(cvsSplitBy);
-                int ingNum = splits.length;
+                String[] splits = line.split(SPLIT_CHARACTER);
                 char type = splits[0].charAt(0);
 
-                if (type == 'r') {
+                if (type == 'e') {
                     String name = splits[1];
+                    double calories = Double.parseDouble(splits[2]);
 
-                    for (int i = 2; i < ingNum; i++) {
-                        String foodName = splits[i];
-                        i++;
-                        double amount = Double.parseDouble(splits[i]);
-
-                        for (BasicFood basicFood : getFoods()) {
-                            if (foodName.equals(basicFood.getName())) {
-                                Pair<BasicFood, Double> pair = new Pair<>(basicFood, amount);
-                                pairs.add(pair);
-                            }
-                        }
-
-                    }
-
-                    recipes.add(new Recipe(type, name, pairs));
+                    Exercise exercise = new Exercise(type, name, calories);
+                    exercises.add(exercise);
                 }
 
             }
@@ -231,85 +251,68 @@ public class ObjectGetter {
                 }
             }
         }
-        return recipes;
-    }
-*/
-    public ArrayList<Exercise> getExercises() {
-
-        ArrayList<Exercise> exercises = new ArrayList<>();
-
-        try {
-
-            br1 = new BufferedReader(new FileReader(csvExercise));
-            while ((line = br1.readLine()) != null) {
-
-                String[] splits = line.split(cvsSplitBy);
-                char type = splits[0].charAt(0);
-
-                if (type == 'e') {
-                    String name = splits[1];
-                    double calories = Double.parseDouble(splits[2]);
-
-                    Exercise exercise = new Exercise(type, name, calories);
-                    exercises.add(exercise);
-                }
-
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (br1 != null) {
-                try {
-                    br1.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        }
         return exercises;
 
     }
-/*
+
     public ArrayList<LogDay> getDays() {
 
         ArrayList<LogDay> days = new ArrayList<>();
         boolean isNewDay = false;
+        String dateString;
         LogDay newDay = null;
+        ArrayList<FoodCount> dayFoods = new ArrayList<>();
+        ArrayList<ExerciseCount> dayExercises = new ArrayList<>();
+        String[] splits = null;
 
         try {
 
             br1 = new BufferedReader(new FileReader(csvLog));
             while ((line = br1.readLine()) != null) {
 
-                String[] splits = line.split(cvsSplitBy);
+                splits = line.split(SPLIT_CHARACTER);
 
-                if (splits[3].equals('w')) {
+                if (splits[3].equals("w")) {
                     isNewDay = true;
                 } else {
                     isNewDay = false;
                 }
 
                 if (isNewDay) {
+                    if (newDay != null) {
+                        newDay.setFoods(dayFoods);
+                        newDay.setExercises(dayExercises);
+                        dayFoods = new ArrayList<>();
+                        dayExercises = new ArrayList<>();
+                        days.add(newDay);
+                    }
                     newDay = new LogDay();
                 }
 
-                if (splits[3].equals('w')) {
+                if (splits[3].equals("w")) {
                     newDay.setWeight(Double.parseDouble(splits[4]));
-                } else if (splits[3].equals('c')) {
+                    Date date = parseDate(splits[0] + "-" + splits[1] + "-" + splits[2]);
+                    newDay.setDate(date);
+                } else if (splits[3].equals("c")) {
                     newDay.setCalorieLimit(Double.parseDouble(splits[4]));
-                } else if (splits[3].equals('f')) {
-                    for (Food food : getFoods()) {
-                        if (foodName.equals(basicFood.getName())) {
-                            Pair<BasicFood, Double> pair = new Pair<>(basicFood, amount);
-                            pairs.add(pair);
+                } else if (splits[3].equals("f")) {
+
+                    for (Food food : getAllFoods()) {
+                        if (food.getName().equals(splits[4])) {
+                            FoodCount foodCount = new FoodCount(food, Double.parseDouble(splits[5]));
+                            dayFoods.add(foodCount);
                         }
                     }
+
+                } else if (splits[3].equals("e")) {
+
+                    for (Exercise exercise : getExercises()) {
+                        if (exercise.getName().equals(splits[4])) {
+                            ExerciseCount exerciseCount = new ExerciseCount(exercise, Double.parseDouble(splits[5]));
+                            dayExercises.add(exerciseCount);
+                        }
+                    }
+
                 }
 
             }
@@ -321,6 +324,13 @@ public class ObjectGetter {
             e.printStackTrace();
             return null;
         } finally {
+
+            Date date = parseDate(splits[0] + "-" + splits[1] + "-" + splits[2]);
+            newDay.setDate(date);
+            newDay.setFoods(dayFoods);
+            newDay.setExercises(dayExercises);
+            days.add(newDay);
+
             if (br1 != null) {
                 try {
                     br1.close();
@@ -333,5 +343,13 @@ public class ObjectGetter {
         return days;
 
     }
-*/
+
+    public static Date parseDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
 }

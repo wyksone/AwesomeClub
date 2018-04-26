@@ -1,0 +1,13 @@
+b,Hot Dog,147.0,13.6,1.1,5.1
+b,Hot Dog Bun,25.0,13.6,1.1,5.1
+b,Mustard,35.0,13.6,1.1,5.1
+b,Ketchup,45.0,13.6,1.1,5.1
+b,Ajvar,50.0,13.6,1.1,5.1
+b,Onion,15.0,13.6,1.1,5.1
+r,Hot Dog-Bun-Mustard,Hot Dog,1.0,Hot Dog Bun,1.0,Mustard,1.5
+r,Hot Dog-Bun-Ketchup,Hot Dog,1.0,Hot Dog Bun,1.0,Ketchup,1.5
+r,Hot Dog-Bun-Onion,Hot Dog,1.0,Hot Dog Bun,1.0,Onion,1.5
+r,Hot Dog-Bun-Ajvar,Hot Dog,1.0,Hot Dog Bun,1.0,Ajvar,1.5
+r,Hot Dog-Bun-Mustard-Ketchup,Hot Dog,1.0,Hot Dog Bun,1.0,Mustard,1.5,Ketchup,1.0
+r,Recipe in Recipe,Hot Dog-Bun-Mustard,1.0,Ajvar,2.0
+r,Recipe in Recipe2,Recipe in Recipe,1.0,Ajvar,2.0
