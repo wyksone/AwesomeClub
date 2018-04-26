@@ -129,12 +129,8 @@ new FormModel {
 					"text": "Options"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuItem1"
-						"text": "Add Food"
+						"text": "Edit Food"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem1ActionPerformed", true ) )
-					} )
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem2"
-						"text": "Add Exercise"
 					} )
 				} )
 			}

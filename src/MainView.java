@@ -219,7 +219,6 @@ public class MainView extends JFrame {
         menuBar1 = new JMenuBar();
         menu1 = new JMenu();
         menuItem1 = new JMenuItem();
-        menuItem2 = new JMenuItem();
         panel1 = new JPanel();
         panel4 = new JPanel();
         comboBox1 = new JComboBox();
@@ -260,13 +259,9 @@ public class MainView extends JFrame {
                 menu1.setText("Options");
 
                 //---- menuItem1 ----
-                menuItem1.setText("Add Food");
+                menuItem1.setText("Edit Food");
                 menuItem1.addActionListener(e -> menuItem1ActionPerformed(e));
                 menu1.add(menuItem1);
-
-                //---- menuItem2 ----
-                menuItem2.setText("Add Exercise");
-                menu1.add(menuItem2);
             }
             menuBar1.add(menu1);
         }
@@ -425,7 +420,6 @@ public class MainView extends JFrame {
     private JMenuBar menuBar1;
     private JMenu menu1;
     private JMenuItem menuItem1;
-    private JMenuItem menuItem2;
     private JPanel panel1;
     private JPanel panel4;
     private JComboBox comboBox1;
